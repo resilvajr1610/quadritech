@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "958187765195",
+    "project_id": "quadritech-8e301",
+    "storage_bucket": "quadritech-8e301.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958187765195:android:58447e2c144517a1118a4e",
+        "android_client_info": {
+          "package_name": "com.quadritech.quadritech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958187765195-ga2iao8a4up7fvrr1kgqmuht6dqbdedt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuzSk-9DMw6poArhT-mNCo0mI8j8SH-oc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958187765195-ga2iao8a4up7fvrr1kgqmuht6dqbdedt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
