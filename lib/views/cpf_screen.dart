@@ -70,10 +70,10 @@ class _CpfScreenState extends State<CpfScreen> {
 
   verification(){
     if(cpf.length == 14){
-     if(widget.type=='Aluno'){
-       Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'Instrutor',time: widget.time,cpfStudent: cpf)));
+     if(widget.type=='CPF do Aluno'){
+       Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'CPF do Instrutor',time: widget.time,cpfStudent: cpf)));
      }else{
-       Navigator.push(context, MaterialPageRoute(builder: (_) => PictureScreen(time: widget.time,cpfStudent: widget.cpfStudent,cpfTeacher: cpf)));
+       Navigator.push(context, MaterialPageRoute(builder: (_) => PictureScreen(time: widget.time,cpfStudent: widget.cpfStudent,cpfTeacher: cpf,type: "Foto do Aluno",idLesson: "",)));
      }
     }else{
       showSnackbar(context, 'Verifique o CPF Digitado', _scaffoldKey);
@@ -97,7 +97,7 @@ class _CpfScreenState extends State<CpfScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextCustom(type: widget.type),
+            TextCustom(text: widget.type),
             SizedBox(height: 10),
             ContainerCpf(cpf: cpf),
             SizedBox(height: 10),

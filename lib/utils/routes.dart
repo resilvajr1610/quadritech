@@ -13,6 +13,10 @@ class Routes{
           return MaterialPageRoute(
               builder: (_) => SplashScreen()
           );
+        case "/history" :
+          return MaterialPageRoute(
+              builder: (_) => HistoryScreen()
+          );
         default :
           _erroRota();
       }

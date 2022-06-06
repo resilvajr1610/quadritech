@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 50),
           ButtonCustom(
-              onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'Aluno',time: selectedText,cpfStudent: ""))),
+              onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'CPF do Aluno',time: selectedText,cpfStudent: ""))),
               text: 'Iniciar Aula',
               size: 14.0,
               colorButton:  PaletteColor.primaryColor,
@@ -76,7 +76,18 @@ class _HomeScreenState extends State<HomeScreen> {
               colorBorder:  PaletteColor.primaryColor,
               widthCustom: 0.7,
               heightCustom: 0.07
-          )
+          ),
+          SizedBox(height: 100),
+          ButtonCustom(
+              onPressed: ()=>Navigator.pushNamed(context, '/history'),
+              text: 'Histórico de Aulas',
+              size: 14.0,
+              colorButton:  PaletteColor.grey,
+              colorText:  PaletteColor.white,
+              colorBorder:  PaletteColor.grey,
+              widthCustom: 0.7,
+              heightCustom: 0.07
+          ),
         ],
       )
     );
