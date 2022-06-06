@@ -12,7 +12,7 @@ class ContainerNumber extends StatelessWidget {
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        color: PaletteColor.blueButtom
+        color: PaletteColor.greyButtom
       ),
       child: Text(number.toString(),style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
     );

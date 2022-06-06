@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 50),
           ButtonCustom(
-              onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'Aluno',time: selectedText,))),
+              onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'Aluno',time: selectedText,cpfStudent: ""))),
               text: 'Iniciar Aula',
               size: 14.0,
               colorButton:  PaletteColor.primaryColor,

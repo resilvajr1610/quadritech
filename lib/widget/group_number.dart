@@ -11,6 +11,7 @@ class GroupNumber extends StatelessWidget {
   final onTap8;
   final onTap9;
   final onTap0;
+  final onTapDelete;
 
   GroupNumber({
     required this.onTap1,
@@ -23,6 +24,7 @@ class GroupNumber extends StatelessWidget {
     required this.onTap8,
     required this.onTap9,
     required this.onTap0,
+    required this.onTapDelete,
 });
 
   @override
@@ -30,7 +32,7 @@ class GroupNumber extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +53,8 @@ class GroupNumber extends StatelessWidget {
               GestureDetector(onTap: onTap9,child: ContainerNumber(number: 9)),
               GestureDetector(onTap: onTap0,child: ContainerNumber(number: 0)),
             ],
-          )
+          ),
+          ContainerDelete(onTapDelete: onTapDelete)
         ],
       ),
     );
