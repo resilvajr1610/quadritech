@@ -123,7 +123,7 @@ class _PictureScreenState extends State<PictureScreen> {
                 colorButton: Colors.green,
                 widthCustom: 0.2,
                 heightCustom: 0.07,
-                onPressed: () =>Navigator.pushReplacementNamed(context, '/home'),
+                onPressed: () =>Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false),
                 size: 14.0,
               ),
             ],

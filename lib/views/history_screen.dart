@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-
 import '../utils/export.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -46,7 +45,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   _data() async {
 
-    var data = await db.collection("lesson").orderBy('startTime').get();
+    var data = await db.collection("lesson").orderBy('startTime',descending: true).get();
 
     setState(() {
       _resultsList = data.docs;
@@ -82,7 +81,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           children: [
             Center(child: TextCustom(text: 'Histórico de aulas',)),
             Container(
-              height: height*0.5,
+              height: height*0.75,
               child: StreamBuilder(
                 stream: _controllerItems.stream,
                 builder: (context, snapshot) {
@@ -98,40 +97,52 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               style: TextStyle(fontSize: 20,color: PaletteColor.primaryColor),)
                         );
                       }else {
-                        return ListView.builder(
-                            itemCount: _resultsList.length,
-                            itemBuilder: (BuildContext context, index) {
-                              DocumentSnapshot item = _resultsList[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Scrollbar(
+                            showTrackOnHover: true,
+                            radius: Radius.circular(5),
+                            thickness: 5,
+                            isAlwaysShown: true,
+                            child: ListView.builder(
+                                itemCount: _resultsList.length,
+                                itemBuilder: (BuildContext context, index) {
+                                  DocumentSnapshot item = _resultsList[index];
 
-                              DateTime dt = (item['startTime'] as Timestamp).toDate();
-                              var output = DateFormat('dd/MM/yyyy HH:mm').format(dt);
+                                  DateTime dt = (item['startTime'] as Timestamp).toDate();
+                                  var output = DateFormat('dd/MM/yyyy HH:mm').format(dt);
 
-                              final time            = ErrorList(item,'time');
-                              final cpfStudent      = ErrorList(item,'cpfStudent');
-                              final cpfTeacher      = ErrorList(item,'cpfTeacher');
-                              final picture_student = ErrorList(item,'picture_student');
-                              final picture_teacher = ErrorList(item,'picture_teacher');
+                                  final time            = ErrorList(item,'time');
+                                  final cpfStudent      = ErrorList(item,'cpfStudent');
+                                  final cpfTeacher      = ErrorList(item,'cpfTeacher');
+                                  final picture_student = ErrorList(item,'picture_student');
+                                  final picture_teacher = ErrorList(item,'picture_teacher');
 
-                              final endTime = dt.add(Duration(minutes: time=='50 minutos'?50:100));
-                              var end = DateFormat('dd/MM/yyyy HH:mm').format(endTime);
+                                  final endTime = dt.add(Duration(minutes: time=='50 minutos'?50:100));
+                                  var end = DateFormat('dd/MM/yyyy HH:mm').format(endTime);
 
-                              return GestureDetector(
-                                onTap: ()=>_showDialog(output,end,time,picture_student, picture_teacher, cpfStudent, cpfTeacher ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
-                                  child: Center(
-                                      child: Card(
-                                        elevation: 2,
-                                        color: PaletteColor.greyButtom,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 20),
-                                          child: Text('Data da aula registrada : '+ output.toString()),
-                                        )
-                                      )
-                                  ),
-                                ),
-                              );
-                            }
+                                  return GestureDetector(
+                                    onTap: ()=>_showDialog(output,end,time,picture_student, picture_teacher, cpfStudent, cpfTeacher ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
+                                      child: Center(
+                                          child: Card(
+                                            elevation: 2,
+                                            color: PaletteColor.greyButtom,
+                                            child: Container(
+                                              width: width,
+                                              padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 20),
+                                              child: Text('Data da aula registrada : '+ output.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 12),),
+                                            )
+                                          )
+                                      ),
+                                    ),
+                                  );
+                                }
+                            ),
+                          ),
                         );
                       }
                   }
