@@ -1,3 +1,4 @@
+import '../models/alert_model.dart';
 import '../utils/export.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedText="50 minutos";
   List titleRadio=['50 minutos','100 minutos'];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,61 +36,91 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         title:  Image.asset("assets/logo_main.png",height: 30),
         centerTitle: true,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          RadioListTile(
-            value: 0,
-            groupValue: selectedRadioButton,
-            activeColor: PaletteColor.primaryColor,
-            title: Container(
-                height: 20,
-                margin: const EdgeInsets.only(top: 15.0),
-                child: Text('50 minutos')
-            ),
-            subtitle: Text(''),
-            onChanged: (value){
-              setSelectedRadio(int.parse(value.toString()));
-            },
-          ),
-          RadioListTile(
-            value: 1,
-            groupValue: selectedRadioButton,
-            activeColor: PaletteColor.primaryColor,
-            title: Container(
-                height: 20,
-                margin: const EdgeInsets.only(top: 15.0),
-                child: Text('100 minutos')
-            ),
-            subtitle: Text(''),
-            onChanged: (value){
-              setSelectedRadio(int.parse(value.toString()));
-            },
-          ),
-          SizedBox(height: 50),
-          ButtonCustom(
-              onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'CPF do Aluno',time: selectedText,cpfStudent: ""))),
-              text: 'Iniciar Aula',
-              size: 14.0,
-              colorButton:  PaletteColor.primaryColor,
-              colorText:  PaletteColor.white,
-              colorBorder:  PaletteColor.primaryColor,
-              widthCustom: 0.7,
-              heightCustom: 0.07
-          ),
-          SizedBox(height: 100),
-          ButtonCustom(
-              onPressed: ()=>Navigator.pushNamed(context, '/history'),
-              text: 'Histórico de Aulas',
-              size: 14.0,
-              colorButton:  PaletteColor.grey,
-              colorText:  PaletteColor.white,
-              colorBorder:  PaletteColor.grey,
-              widthCustom: 0.7,
-              heightCustom: 0.07
-          ),
+        actions: [
+          IconButton(
+            color: PaletteColor.primaryColor,
+            onPressed: ()=>AlertModel().alert('Configurações!', 'Insira a senha', PaletteColor.primaryColor, PaletteColor.grey, context, [
+              SizedBox(
+                height: 30,
+                width: 100,
+                child: ButtonCustom(
+                  colorButton:  PaletteColor.primaryColor,
+                  colorText:  PaletteColor.white,
+                  colorBorder:  PaletteColor.primaryColor,
+                  widthCustom: 0.7,
+                  heightCustom: 0.07,
+                  size: 15.0,
+                  onPressed: (){
+                    if(controller.text == 'senha123'){
+                      controller.clear();
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/settings');
+                    }
+                  },
+                  text: 'Entrar',
+                ),
+              )
+            ],controller),
+            icon: Icon(Icons.settings)
+          )
         ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RadioListTile(
+              value: 0,
+              groupValue: selectedRadioButton,
+              activeColor: PaletteColor.primaryColor,
+              title: Container(
+                  height: 20,
+                  margin: const EdgeInsets.only(top: 15.0),
+                  child: Text('50 minutos')
+              ),
+              subtitle: Text(''),
+              onChanged: (value){
+                setSelectedRadio(int.parse(value.toString()));
+              },
+            ),
+            RadioListTile(
+              value: 1,
+              groupValue: selectedRadioButton,
+              activeColor: PaletteColor.primaryColor,
+              title: Container(
+                  height: 20,
+                  margin: const EdgeInsets.only(top: 15.0),
+                  child: Text('100 minutos')
+              ),
+              subtitle: Text(''),
+              onChanged: (value){
+                setSelectedRadio(int.parse(value.toString()));
+              },
+            ),
+            SizedBox(height: 50),
+            ButtonCustom(
+                onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'CPF do Aluno',time: selectedText,cpfStudent: ""))),
+                text: 'Iniciar Aula',
+                size: 14.0,
+                colorButton:  PaletteColor.primaryColor,
+                colorText:  PaletteColor.white,
+                colorBorder:  PaletteColor.primaryColor,
+                widthCustom: 0.7,
+                heightCustom: 0.07
+            ),
+            SizedBox(height: 100),
+            ButtonCustom(
+                onPressed: ()=>Navigator.pushNamed(context, '/history'),
+                text: 'Histórico de Aulas',
+                size: 14.0,
+                colorButton:  PaletteColor.grey,
+                colorText:  PaletteColor.white,
+                colorBorder:  PaletteColor.grey,
+                widthCustom: 0.7,
+                heightCustom: 0.07
+            ),
+          ],
+        ),
       )
     );
   }

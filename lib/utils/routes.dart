@@ -17,6 +17,10 @@ class Routes{
           return MaterialPageRoute(
               builder: (_) => HistoryScreen()
           );
+        case "/settings" :
+          return MaterialPageRoute(
+              builder: (_) => SettingsScreen()
+          );
         default :
           _erroRota();
       }

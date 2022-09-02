@@ -14,6 +14,7 @@ export '../views/home_screen.dart';
 export '../views/cpf_screen.dart';
 export '../views/picture_screen.dart';
 export '../views/history_screen.dart';
+export '../views/settings_screen.dart';
 
 export '../widget/input_text.dart';
 export '../widget/buttom_custom.dart';
