@@ -34,8 +34,10 @@ class ButtonCustom extends StatelessWidget {
             side: BorderSide(width: 3,color: colorBorder),
           ),
         onPressed: onPressed,
-        child: Text(text,
-            style: TextStyle(fontFamily: 'Nunito',color: colorText,fontSize: size,fontWeight: FontWeight.bold)
+        child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontFamily: 'Nunito',color: colorText,fontSize: size,fontWeight: FontWeight.bold,)
         )
     );
   }

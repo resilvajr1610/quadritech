@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import '../models/ErrorDate.dart';
 import '../utils/export.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List _resultsList = [];
 
-  _showDialog(String startTime,String endTime,String time,String picture_student, String picture_teacher, String cpfStudent, String cpfTeacher ) {
+  _showDialog(String startTime,String endTime,String time,String picture_student, String picture_teacher, String cpfStudent, String cpfTeacher,String picture_student_finish,String picture_teacher_finish) {
     showDialog(
         context: context,
         builder: (context) {
@@ -23,6 +24,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             time: time,
             picture_student: picture_student,
             picture_teacher: picture_teacher,
+            picture_student_finish: picture_student_finish,
+            picture_teacher_finish: picture_teacher_finish,
             startTime: startTime,
             endTime: endTime,
             cpfStudent: cpfStudent,
@@ -109,20 +112,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 itemBuilder: (BuildContext context, index) {
                                   DocumentSnapshot item = _resultsList[index];
 
-                                  DateTime dt = (item['startTime'] as Timestamp).toDate();
-                                  var output = DateFormat('dd/MM/yyyy HH:mm').format(dt);
+                                  DateTime startTime = (item['startTime'] as Timestamp).toDate();
+                                  var convStart = DateFormat('dd/MM/yyyy HH:mm').format(startTime);
+                                  var convFinish='';
+                                  if(ErrorDate(item,'finishTime')!=Timestamp(0,0)){
+                                    DateTime finishTime = (item['finishTime'] as Timestamp).toDate();
+                                    convFinish = DateFormat('dd/MM/yyyy HH:mm').format(finishTime);
+                                  }
 
                                   final time            = ErrorList(item,'time');
                                   final cpfStudent      = ErrorList(item,'cpfStudent');
                                   final cpfTeacher      = ErrorList(item,'cpfTeacher');
                                   final picture_student = ErrorList(item,'picture_student');
                                   final picture_teacher = ErrorList(item,'picture_teacher');
-
-                                  final endTime = dt.add(Duration(minutes: time=='50 minutos'?50:100));
-                                  var end = DateFormat('dd/MM/yyyy HH:mm').format(endTime);
+                                  final picture_teacher_finish = ErrorList(item,'picture_teacher_finish');
+                                  final picture_student_finish = ErrorList(item,'picture_student_finish');
 
                                   return GestureDetector(
-                                    onTap: ()=>_showDialog(output,end,time,picture_student, picture_teacher, cpfStudent, cpfTeacher ),
+                                    onTap: ()=>_showDialog(convStart,convFinish,time,picture_student, picture_teacher, cpfStudent, cpfTeacher,picture_student_finish,picture_teacher_finish),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
                                       child: Center(
@@ -132,7 +139,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             child: Container(
                                               width: width,
                                               padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 20),
-                                              child: Text('Data da aula registrada : '+ output.toString(),
+                                              child: Text('Data da aula registrada : '+ convStart.toString(),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(fontSize: 12),),
                                             )

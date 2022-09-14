@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 import '../utils/export.dart';
 
 class CpfScreen extends StatefulWidget {
@@ -69,7 +71,7 @@ class _CpfScreenState extends State<CpfScreen> {
   }
 
   verification(){
-    if(cpf.length == 14){
+    if(GetUtils.isCpf(cpf)){
      if(widget.type=='CPF do Aluno'){
        Navigator.push(context, MaterialPageRoute(builder: (_) => CpfScreen(type: 'CPF do Instrutor',time: widget.time,cpfStudent: cpf)));
      }else{

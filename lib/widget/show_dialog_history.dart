@@ -7,7 +7,9 @@ class ShowDialogHistory extends StatelessWidget {
   final cpfStudent;
   final cpfTeacher;
   final picture_student;
+  final picture_student_finish;
   final picture_teacher;
+  final picture_teacher_finish;
   final startTime;
   final endTime;
 
@@ -18,7 +20,9 @@ class ShowDialogHistory extends StatelessWidget {
     required this.cpfStudent,
     required this.cpfTeacher,
     required this.picture_student,
+    required this.picture_student_finish,
     required this.picture_teacher,
+    required this.picture_teacher_finish,
     required this.startTime,
     required this.endTime,
   });
@@ -48,7 +52,7 @@ class ShowDialogHistory extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Text('Foto Aluno',style: TextStyle(color: PaletteColor.primaryColor, fontSize: 15),),
+                  Text('Foto Aluno\nInício',style: TextStyle(color: PaletteColor.primaryColor, fontSize: 15),textAlign: TextAlign.center,),
                   Container(
                     width: 80,
                     height: 80,
@@ -63,7 +67,7 @@ class ShowDialogHistory extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Text('Foto Instrutor',style: TextStyle(color: PaletteColor.primaryColor, fontSize: 15),),
+                  Text('Foto Instrutor\nInício',style: TextStyle(color: PaletteColor.primaryColor, fontSize: 15),textAlign: TextAlign.center),
                   Container(
                     width: 80,
                     height: 80,
@@ -78,6 +82,41 @@ class ShowDialogHistory extends StatelessWidget {
               ),
             ],
           ),
+          picture_student_finish!='' && picture_student_finish!=null?Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Text('Foto Aluno\nFinal',style: TextStyle(color: PaletteColor.primaryColor, fontSize: 15),textAlign: TextAlign.center),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: PaletteColor.greyButtom,
+                        image: DecorationImage(
+                            image: NetworkImage(picture_student_finish), fit: BoxFit.cover)),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Text('Foto Instrutor\nFinal',style: TextStyle(color: PaletteColor.primaryColor, fontSize: 15),textAlign: TextAlign.center),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: PaletteColor.greyButtom,
+                        image: DecorationImage(
+                            image: NetworkImage(picture_teacher_finish), fit: BoxFit.cover)),
+                  ),
+                ],
+              ),
+            ],
+          ):Container(),
         ],
       ),
       titleTextStyle: TextStyle(color: PaletteColor.primaryColor, fontSize: 20),

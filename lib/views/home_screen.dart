@@ -65,37 +65,46 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            RadioListTile(
-              value: 0,
-              groupValue: selectedRadioButton,
-              activeColor: PaletteColor.primaryColor,
-              title: Container(
-                  height: 20,
-                  margin: const EdgeInsets.only(top: 15.0),
-                  child: Text('50 minutos')
+            Spacer(),
+            Container(
+              width: MediaQuery.of(context).size.width*0.7,
+              child: RadioListTile(
+                value: 0,
+                groupValue: selectedRadioButton,
+                activeColor: PaletteColor.primaryColor,
+                title: Container(
+                    height: 20,
+                    margin: const EdgeInsets.only(top: 15.0),
+                    child: Text('50 minutos')
+                ),
+                subtitle: Text(''),
+                onChanged: (value){
+                  setSelectedRadio(int.parse(value.toString()));
+                },
               ),
-              subtitle: Text(''),
-              onChanged: (value){
-                setSelectedRadio(int.parse(value.toString()));
-              },
             ),
-            RadioListTile(
-              value: 1,
-              groupValue: selectedRadioButton,
-              activeColor: PaletteColor.primaryColor,
-              title: Container(
-                  height: 20,
-                  margin: const EdgeInsets.only(top: 15.0),
-                  child: Text('100 minutos')
+            Container(
+              width: MediaQuery.of(context).size.width*0.7,
+              child: RadioListTile(
+                value: 1,
+                groupValue: selectedRadioButton,
+                activeColor: PaletteColor.primaryColor,
+                title: Container(
+                    height: 20,
+                    margin: const EdgeInsets.only(top: 15.0),
+                    child: Text('100 minutos')
+                ),
+                subtitle: Text(''),
+                onChanged: (value){
+                  setSelectedRadio(int.parse(value.toString()));
+                },
               ),
-              subtitle: Text(''),
-              onChanged: (value){
-                setSelectedRadio(int.parse(value.toString()));
-              },
             ),
             SizedBox(height: 50),
             ButtonCustom(
@@ -108,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 widthCustom: 0.7,
                 heightCustom: 0.07
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 30),
             ButtonCustom(
                 onPressed: ()=>Navigator.pushNamed(context, '/history'),
                 text: 'Histórico de Aulas',
@@ -119,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 widthCustom: 0.7,
                 heightCustom: 0.07
             ),
+            SizedBox(height: 50),
           ],
         ),
       )

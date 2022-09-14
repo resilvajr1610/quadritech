@@ -15,5 +15,5 @@ void showSnackbar(BuildContext context, String text,final _scaffoldKey){
     ),
   );
 
-  _scaffoldKey.currentState.showSnackBar(snackbar);
+  ScaffoldMessenger.of(context).showSnackBar(snackbar);
 }

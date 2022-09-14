@@ -1,26 +1,22 @@
 import '../utils/export.dart';
 import 'countdown_screen.dart';
 
-class PictureScreen extends StatefulWidget {
+class PictureFinishScreen extends StatefulWidget {
   final time;
   final type;
-  final cpfStudent;
-  final cpfTeacher;
   final idLesson;
 
-  PictureScreen({
+  PictureFinishScreen({
     required this.time,
-    required this.cpfStudent,
-    required this.cpfTeacher,
     required this.type,
     required this.idLesson,
   });
 
   @override
-  _PictureScreenState createState() => _PictureScreenState();
+  _PictureFinishScreenState createState() => _PictureFinishScreenState();
 }
 
-class _PictureScreenState extends State<PictureScreen> {
+class _PictureFinishScreenState extends State<PictureFinishScreen> {
   FirebaseStorage storage = FirebaseStorage.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -75,38 +71,18 @@ class _PictureScreenState extends State<PictureScreen> {
   }
 
   _urlImageFirestore(String url, String namePhoto) {
-    _lessonModel = LessonModel.createId();
 
-    Map<String, dynamic> dateUpdate = {
-      namePhoto: url,
-      'cpfStudent' : widget.cpfStudent,
-      'cpfTeacher' : widget.cpfTeacher,
-      'time'       : widget.time,
-      'idLesson'   : widget.idLesson,
-      'startTime'  : DateTime.now(),
-    };
-
-    if (widget.type == 'Foto do Aluno') {
-      db
-          .collection("lesson")
-          .doc(_lessonModel.id)
-          .set(dateUpdate)
-          .then((value) {
-        setState(() {
-          _sending = false;
-        });
+    db.collection("lesson")
+        .doc(widget.idLesson)
+        .update({
+          namePhoto: url,
+          'finishTime': DateTime.now(),
+        })
+        .then((value) {
+      setState(() {
+        _sending = false;
       });
-    } else {
-      db
-          .collection("lesson")
-          .doc(widget.idLesson)
-          .update(dateUpdate)
-          .then((value) {
-        setState(() {
-          _sending = false;
-        });
-      });
-    }
+    });
   }
 
   _showDialog() {
@@ -115,7 +91,7 @@ class _PictureScreenState extends State<PictureScreen> {
         barrierDismissible: false,
         builder: (context) {
           return ShowDialog(
-            title: 'Dados cadastrados\n com sucesso!',
+            title: 'Aula Finalizada\n com sucesso!',
             list: [
               ButtonCustom(
                 text: 'OK',
@@ -124,7 +100,7 @@ class _PictureScreenState extends State<PictureScreen> {
                 colorButton: Colors.green,
                 widthCustom: 0.2,
                 heightCustom: 0.07,
-                onPressed: () =>Navigator.of(context).push(MaterialPageRoute(builder: (_) => CountdownScreen(timer: widget.time,idLesson: widget.idLesson,))),
+                onPressed: () =>Navigator.of(context).push(MaterialPageRoute(builder: (_) => HomeScreen())),
                 size: 14.0,
               ),
             ],
@@ -181,8 +157,8 @@ class _PictureScreenState extends State<PictureScreen> {
                   )
                 : ButtonCustom(
                     onPressed: () => _savePhoto(widget.type == 'Foto do Aluno'
-                        ? 'picture_student'
-                        : 'picture_teacher'),
+                        ? 'picture_student_finish'
+                        : 'picture_teacher_finish'),
                     text: 'Tirar Foto',
                     size: 14.0,
                     colorButton: PaletteColor.grey,
@@ -201,12 +177,10 @@ class _PictureScreenState extends State<PictureScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => PictureScreen(
+                                builder: (_) => PictureFinishScreen(
                                   time: widget.time,
-                                  cpfStudent: widget.cpfStudent,
-                                  cpfTeacher: widget.cpfTeacher,
                                   type: "Foto do Instrutor",
-                                  idLesson: _lessonModel.id,
+                                  idLesson: widget.idLesson,
                                 )));
                       } else {
                         _showDialog();
