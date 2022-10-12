@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Image.asset("assets/logo_main.png",width: 200,),
               Visibility(
                   visible: _show,
-                  child: Image.asset("assets/logo_class.png",width: 150,)),
+                  child: Image.asset("assets/pratico.png",width: 150,)),
             ],
           ),
         ));

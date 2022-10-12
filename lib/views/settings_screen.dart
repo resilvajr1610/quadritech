@@ -14,7 +14,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String selectedText="não";
   List titleRadio=['não','sim'];
-  List nameRadio=['Biometria Facial','Biometria Digital','Filmagem','Percurso'];
+  List nameRadio=['Biometria Facial','Biometria Digital','Filmagem','Percurso','Fotos Aleatórias','Câmera Externa','Câmera Celular'];
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<RadioSettingsModel> _listModelRadio=[];
 
@@ -27,6 +27,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         nameRadio[1]:_listModelRadio[1].select,
         nameRadio[2]:_listModelRadio[2].select,
         nameRadio[3]:_listModelRadio[3].select,
+        nameRadio[4]:_listModelRadio[4].select,
+        nameRadio[5]:_listModelRadio[5].select,
+        nameRadio[6]:_listModelRadio[6].select,
       });
     });
   }
@@ -41,6 +44,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _listModelRadio.add(RadioSettingsModel(select: data?[nameRadio[1]]));
         _listModelRadio.add(RadioSettingsModel(select: data?[nameRadio[2]]));
         _listModelRadio.add(RadioSettingsModel(select: data?[nameRadio[3]]));
+        _listModelRadio.add(RadioSettingsModel(select: data?[nameRadio[4]]??0));
+        _listModelRadio.add(RadioSettingsModel(select: data?[nameRadio[5]]??0));
+        _listModelRadio.add(RadioSettingsModel(select: data?[nameRadio[6]]??0));
       });
     });
   }
@@ -63,9 +69,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Container(
-            height: 250,
+            height: MediaQuery.of(context).size.height*0.7,
             width: MediaQuery.of(context).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,

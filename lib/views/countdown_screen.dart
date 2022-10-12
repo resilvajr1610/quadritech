@@ -26,8 +26,8 @@ class _CountdownScreenState extends State<CountdownScreen> {
     print(widget.timer);
     final splitted = widget.timer.split(' ');
     int conv = int.parse(splitted[0]);
-    // duration = Duration(minutes: conv);
-    duration = Duration(minutes: 1);
+    duration = Duration(minutes: conv);
+    // duration = Duration(minutes: 1);
   }
 
   void addTime(){
@@ -102,7 +102,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
               widthCustom: 0.8,
             )
             :ButtonCustom(
-              onPressed:(){},
+              onPressed:()=>Navigator.push(context, MaterialPageRoute(builder: (_) =>PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,))),
               heightCustom: 0.1,
               size: 15.0,
               colorBorder: Colors.orange,
