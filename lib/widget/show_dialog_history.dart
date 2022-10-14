@@ -53,6 +53,21 @@ class ShowDialogHistory extends StatelessWidget {
           SizedBox(height: 5),
           Text('CPF Instrutor : '+ cpfTeacher,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
           SizedBox(height: 20),
+          video==''?Container():Container(
+            alignment: Alignment.center,
+            child: ButtonCustom(
+                onPressed:()async{
+                  await launchUrl(Uri.parse(video));
+                },
+                text: 'Video',
+                size: 14.0,
+                colorButton: PaletteColor.primaryColor,
+                colorText: PaletteColor.white,
+                colorBorder: PaletteColor.primaryColor,
+                widthCustom: 0.4,
+                heightCustom: 0.05
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -87,21 +102,6 @@ class ShowDialogHistory extends StatelessWidget {
                 ],
               ),
             ],
-          ),
-          video==''?Container():Container(
-            alignment: Alignment.center,
-            child: ButtonCustom(
-                onPressed:()async{
-                  await launchUrl(Uri.parse(video));
-                },
-                text: 'Video',
-                size: 14.0,
-                colorButton: PaletteColor.primaryColor,
-                colorText: PaletteColor.white,
-                colorBorder: PaletteColor.primaryColor,
-                widthCustom: 0.4,
-                heightCustom: 0.05
-            ),
           ),
           picture_student_finish!='' && picture_student_finish!=null?Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

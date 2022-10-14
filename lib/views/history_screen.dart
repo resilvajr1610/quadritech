@@ -125,7 +125,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   }
 
                                   final time            = ErrorString(item,'time');
-                                  final video            = ErrorString(item,'video');
+                                  final video            = ErrorString(item,'videos');
                                   final cpfStudent      = ErrorString(item,'cpfStudent');
                                   final cpfTeacher      = ErrorString(item,'cpfTeacher');
                                   final picture_student = ErrorString(item,'picture_student');

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -33,6 +34,8 @@ class _CountdownScreenState extends State<CountdownScreen> {
   Duration duration = Duration();
   Timer? timer;
   bool click = true;
+  int totalSecondsFinal = 0;
+  int totalSecondsStart = 0;
 
   WidgetState widgetState = WidgetState.NONE;
   File? picture;
@@ -44,6 +47,12 @@ class _CountdownScreenState extends State<CountdownScreen> {
   bool compressVideo=false;
   double videoTimer = 0.0;
   UploadTask? task;
+  int randomNumber1 = 0;
+  int randomNumber2 = 0;
+  int randomNumber3 = 0;
+  int randomNumber4 = 0;
+  int randomNumber5 = 0;
+  Uint8List? photoBytes;
 
   @override
   void initState() {
@@ -52,20 +61,31 @@ class _CountdownScreenState extends State<CountdownScreen> {
     final splitted = widget.timer.split(' ');
     int conv = int.parse(splitted[0]);
     duration = Duration(minutes: conv);
+    // duration = Duration(minutes: 2);
+    setState(() {
+      totalSecondsStart = duration.inSeconds;
+    });
     inializeCamera();
-    // duration = Duration(minutes: 1);
   }
   @override
   void dispose() {
     super.dispose();
     cameraVideoController!.dispose();
-    cameraPhotoController!.dispose();
   }
 
-  takePhoto()async{
-    XFile xfile = await cameraPhotoController!.takePicture();
-    if(xfile!=null){
-      _savePhoto('lessonPhotos',xfile);
+  // takePhoto()async{
+  //   XFile xfile = await cameraPhotoController!.takePicture();
+  //   if(xfile!=null){
+  //     _savePhoto('lessonPhotos',xfile);
+  //   }
+  // }
+
+  stopTimer()async{
+    XFile videopath = await cameraVideoController!.stopVideoRecording();
+    if(videopath!=null){
+      _saveVideo(videopath);
+    }else{
+      stopTimer();
     }
   }
 
@@ -76,9 +96,6 @@ class _CountdownScreenState extends State<CountdownScreen> {
         click = false;
         final seconds = duration.inSeconds - addSeconds;
         duration = Duration(seconds: seconds);
-        if(seconds==2500 || seconds==2000 || seconds == 1900 || seconds == 1600 || seconds == 900){
-          takePhoto();
-        }
       });
     }else{
      setState(() {
@@ -87,22 +104,105 @@ class _CountdownScreenState extends State<CountdownScreen> {
     }
   }
 
+  Future createVideo()async{
+    XFile videopath = await cameraVideoController!.stopVideoRecording();
+    if(videopath!=null){
+      final file = File(videopath.path);
+      print('file do video');
+      print(file);
+      _saveVideo(videopath);
+    }
+  }
+  createRandon(){
+    Random random = new Random();
+
+    setState(() {
+      int time = totalSecondsStart - totalSecondsFinal;
+
+      randomNumber1 = random.nextInt(time);
+      randomNumber2 = random.nextInt(time);
+      randomNumber3 = random.nextInt(time);
+      randomNumber4 = random.nextInt(time);
+      randomNumber5 = random.nextInt(time);
+    });
+    generateSprint(1);
+  }
+
+  generateSprint(int indexPhoto)async{
+      photoBytes = null;
+      switch (indexPhoto){
+        case 1:
+          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber1).then((value){
+            setState(()=>photoBytes = value);
+          });
+          break;
+        case 2:
+          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber2).then((value){
+            setState(()=>photoBytes = value);
+          });
+          break;
+        case 3:
+          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber3).then((value){
+            setState(()=>photoBytes = value);
+          });
+          break;
+        case 4:
+          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber4).then((value){
+            setState(()=>photoBytes = value);
+          });
+          break;
+        case 5:
+          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber5).then((value){
+            setState(()=>photoBytes = value);
+          });
+          break;
+      }
+      if(photoBytes!=null){
+        _uploadImage(indexPhoto);
+      }
+  }
+
+  Future _uploadImage(int index) async {
+    Reference pastaRaiz = storage.ref();
+    Reference arquivo = pastaRaiz.child("aulas").child('lessonPhotos' +DateTime.now().toString() +".jpg");
+    var photo = XFile.fromData(photoBytes!);
+    Uint8List arquivoSelecionado = await photo.readAsBytes();
+
+    await arquivo.putData(arquivoSelecionado).whenComplete(()async{
+      await arquivo.getDownloadURL().then((value){
+        db.collection("lesson")
+            .doc(widget.idLesson)
+            .update({
+          'photosLesson': FieldValue.arrayUnion([value.toString()]),
+        }).then((_) {
+          setState(() {
+            print('salvo: $index');
+            if(index==5){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
+            }else{
+              generateSprint(index+1);
+            }
+          });
+        });
+      });
+    });
+  }
+
   void startTimer()async{
-    await cameraVideoController!.startVideoRecording().then((value) => print('video cmoecouuuuuu'));
-    timer = Timer.periodic(Duration(seconds: 1), (_) =>addTime());
+    await cameraVideoController!.startVideoRecording().whenComplete(() => timer = Timer.periodic(Duration(seconds: 1), (_) =>addTime()));
   }
 
   Future inializeCamera()async{
     widgetState = WidgetState.LOADING;
     if(mounted)setState(() {});
-    _camerasPhoto = await availableCameras();
+    // _camerasPhoto = await availableCameras();
     _camerasVideo = await availableCameras();
-    cameraPhotoController = CameraController(_camerasPhoto[0], ResolutionPreset.low);
+    // cameraPhotoController = CameraController(_camerasPhoto[0], ResolutionPreset.low);
     cameraVideoController = CameraController(_camerasVideo[0], ResolutionPreset.low);
-    await cameraPhotoController!.initialize();
+    // await cameraPhotoController!.initialize();
     await cameraVideoController!.initialize();
 
-    if(cameraPhotoController!.value.hasError){
+    if(cameraVideoController!.value.hasError){
       widgetState = WidgetState.ERROR;
       if(mounted)setState(() {});
     }else{
@@ -111,32 +211,16 @@ class _CountdownScreenState extends State<CountdownScreen> {
     }
   }
 
-  Future _savePhoto(String namePhoto,XFile file) async {
-    if (namePhoto != null && namePhoto != "") {
-      try {
-        final imageTemporary = File(file.path);
-        setState(() {
-          this.picture = imageTemporary;
-          _uploadImage(namePhoto);
-        });
-      } on PlatformException catch (e) {
-        print('Error : $e');
-      }
-    }
-  }
+  Future _saveVideo(XFile file) async {
 
-  stopTimer()async{
     setState((){
       compressVideo = true;
-      duration = Duration(seconds: 0);
+      totalSecondsFinal = duration.inSeconds;
+      if(totalSecondsFinal!=0){
+        duration = Duration(seconds: 0);
+      }
     });
-    XFile videopath = await cameraVideoController!.stopVideoRecording();
-    if(videopath!=null){
-      _saveVideo(videopath);
-    }
-  }
 
-  Future _saveVideo(XFile file) async {
       try {
         var fileAux = File(file.path);
         setState(()=> fileVideo = fileAux);
@@ -165,58 +249,11 @@ class _CountdownScreenState extends State<CountdownScreen> {
         db.collection("lesson")
             .doc(widget.idLesson)
             .update({
-          'video': value.toString(),
-        }).then((value) {
-          setState(() {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
-          });
+          'videos': value.toString(),
+        }).then((value) async{
+          createRandon();
         });
       });
-    });
-  }
-
-  saveFirebase(UploadTask task)async{
-    print('aqui 2');
-      if(task!=null){
-
-
-      }else{
-        print('task é nullo');
-      }
-  }
-
-
-  Future _uploadImage(String namePhoto) async {
-    Reference pastaRaiz = storage.ref();
-    Reference arquivo = pastaRaiz.child("aulas").child(namePhoto +DateTime.now().toString() +".jpg");
-
-    UploadTask task = arquivo.putFile(picture!);
-
-    Future.delayed(const Duration(seconds: 3), () async {
-      String urlImage = await task.snapshot.ref.getDownloadURL();
-      if (urlImage != null) {
-        setState(() {
-          print('urlImage');
-          print(urlImage);
-        });
-        _urlImageFirestore(urlImage, namePhoto);
-      }
-    });
-  }
-
-  _urlImageFirestore(String url, String namePhoto) {
-
-    Map<String, dynamic> dateUpdate = {
-      'photosLesson': FieldValue.arrayUnion([url]),
-    };
-
-    db.collection("lesson")
-      .doc(widget.idLesson)
-      .update(dateUpdate)
-      .then((value) {
-        setState(() {
-          print('salvo');
-        });
     });
   }
 
@@ -294,7 +331,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Aula sendo gravada.\nAguarde finalizar.',
+                    'Aula sendo registrada.\nAguarde finalizar.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 20),
                   ),
