@@ -32,8 +32,7 @@ class _PictureScreenState extends State<PictureScreen> {
   Future _savePhoto(String namePhoto) async {
     if (namePhoto != null && namePhoto != "") {
       try {
-        final image = await ImagePicker()
-            .pickImage(source: ImageSource.camera, imageQuality: 50);
+        final image = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 50);
         if (image == null) return;
 
         final imageTemporary = File(image.path);
@@ -44,6 +43,7 @@ class _PictureScreenState extends State<PictureScreen> {
           });
           _uploadImage(namePhoto);
         });
+
       } on PlatformException catch (e) {
         print('Error : $e');
       }
@@ -221,7 +221,7 @@ class _PictureScreenState extends State<PictureScreen> {
                   colorBorder: PaletteColor.primaryColor,
                   widthCustom: 0.8,
                   heightCustom: 0.07),
-            ):Container()
+            ):Container(),
           ],
         ),
       ),

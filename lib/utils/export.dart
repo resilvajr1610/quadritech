@@ -7,7 +7,7 @@ export 'routes.dart';
 export 'colors.dart';
 
 export '../models/lesson_model.dart';
-export '../models/ErrorList.dart';
+export '../models/error_string.dart';
 
 export '../views/splash_screen.dart';
 export '../views/home_screen.dart';

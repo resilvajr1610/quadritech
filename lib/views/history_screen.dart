@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import '../models/ErrorDate.dart';
+import '../models/error_list.dart';
 import '../utils/export.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -15,13 +16,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List _resultsList = [];
 
-  _showDialog(String startTime,String endTime,String time,String picture_student, String picture_teacher, String cpfStudent, String cpfTeacher,String picture_student_finish,String picture_teacher_finish) {
+  _showDialog(String startTime,String endTime,String time,String picture_student, String picture_teacher, String cpfStudent,
+      String cpfTeacher,String picture_student_finish,String picture_teacher_finish,List photosLesson,String video) {
     showDialog(
         context: context,
         builder: (context) {
           return ShowDialogHistory(
             title: 'Aula',
             time: time,
+            video: video,
             picture_student: picture_student,
             picture_teacher: picture_teacher,
             picture_student_finish: picture_student_finish,
@@ -30,6 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             endTime: endTime,
             cpfStudent: cpfStudent,
             cpfTeacher: cpfTeacher,
+            photosLesson: photosLesson,
             list: [
               ButtonCustom(
                 text: 'Fechar',
@@ -120,16 +124,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     convFinish = DateFormat('dd/MM/yyyy HH:mm').format(finishTime);
                                   }
 
-                                  final time            = ErrorList(item,'time');
-                                  final cpfStudent      = ErrorList(item,'cpfStudent');
-                                  final cpfTeacher      = ErrorList(item,'cpfTeacher');
-                                  final picture_student = ErrorList(item,'picture_student');
-                                  final picture_teacher = ErrorList(item,'picture_teacher');
-                                  final picture_teacher_finish = ErrorList(item,'picture_teacher_finish');
-                                  final picture_student_finish = ErrorList(item,'picture_student_finish');
+                                  final time            = ErrorString(item,'time');
+                                  final video            = ErrorString(item,'video');
+                                  final cpfStudent      = ErrorString(item,'cpfStudent');
+                                  final cpfTeacher      = ErrorString(item,'cpfTeacher');
+                                  final picture_student = ErrorString(item,'picture_student');
+                                  final picture_teacher = ErrorString(item,'picture_teacher');
+                                  final picture_teacher_finish = ErrorString(item,'picture_teacher_finish');
+                                  final picture_student_finish = ErrorString(item,'picture_student_finish');
+                                  List photosLesson = ErrorList(item,'photosLesson');
 
                                   return GestureDetector(
-                                    onTap: ()=>_showDialog(convStart,convFinish,time,picture_student, picture_teacher, cpfStudent, cpfTeacher,picture_student_finish,picture_teacher_finish),
+                                    onTap: ()=>_showDialog(convStart,convFinish,time,picture_student, picture_teacher, cpfStudent, cpfTeacher,picture_student_finish,picture_teacher_finish,photosLesson,video),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
                                       child: Center(
