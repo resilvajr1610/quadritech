@@ -16,6 +16,9 @@ class ShowDialogHistory extends StatelessWidget {
   final startTime;
   final endTime;
   List photosLesson;
+  String placa;
+  String kmInicial;
+  String kmFinal;
 
   ShowDialogHistory({
     required this.title,
@@ -31,6 +34,9 @@ class ShowDialogHistory extends StatelessWidget {
     required this.endTime,
     required this.photosLesson,
     required this.video,
+    required this.placa,
+    required this.kmInicial,
+    required this.kmFinal,
   });
 
   @override
@@ -52,6 +58,12 @@ class ShowDialogHistory extends StatelessWidget {
           Text('CPF Aluno : '+ cpfStudent,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
           SizedBox(height: 5),
           Text('CPF Instrutor : '+ cpfTeacher,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
+          SizedBox(height: 5),
+          Text('Placa : '+ placa,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
+          SizedBox(height: 5),
+          Text('KM Inicial : '+ kmInicial,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
+          SizedBox(height: 5),
+          Text('KM Final : '+ kmFinal,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
           SizedBox(height: 20),
           video==''?Container():Container(
             alignment: Alignment.center,

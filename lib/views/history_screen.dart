@@ -17,11 +17,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List _resultsList = [];
 
   _showDialog(String startTime,String endTime,String time,String picture_student, String picture_teacher, String cpfStudent,
-      String cpfTeacher,String picture_student_finish,String picture_teacher_finish,List photosLesson,String video) {
+      String cpfTeacher,String picture_student_finish,String picture_teacher_finish,List photosLesson,String video,String placa, String kmInicial, String kmFinal) {
     showDialog(
         context: context,
         builder: (context) {
           return ShowDialogHistory(
+            placa: placa,
+            kmInicial: kmInicial,
+            kmFinal: kmFinal,
             title: 'Aula',
             time: time,
             video: video,
@@ -132,10 +135,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   final picture_teacher = ErrorString(item,'picture_teacher');
                                   final picture_teacher_finish = ErrorString(item,'picture_teacher_finish');
                                   final picture_student_finish = ErrorString(item,'picture_student_finish');
+                                  final placa = ErrorString(item,'placa');
+                                  final kmInicial = ErrorString(item,'kmInicial');
+                                  final kmFinal = ErrorString(item,'kmFinal');
                                   List photosLesson = ErrorList(item,'photosLesson');
 
                                   return GestureDetector(
-                                    onTap: ()=>_showDialog(convStart,convFinish,time,picture_student, picture_teacher, cpfStudent, cpfTeacher,picture_student_finish,picture_teacher_finish,photosLesson,video),
+                                    onTap: ()=>_showDialog(convStart,convFinish,time,picture_student, picture_teacher, cpfStudent, cpfTeacher,picture_student_finish,
+                                        picture_teacher_finish,photosLesson,video,placa,kmInicial,kmFinal),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
                                       child: Center(
