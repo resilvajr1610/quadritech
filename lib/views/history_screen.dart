@@ -17,7 +17,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List _resultsList = [];
 
   _showDialog(String startTime,String endTime,String time,String picture_student, String picture_teacher, String cpfStudent,
-      String cpfTeacher,String picture_student_finish,String picture_teacher_finish,List photosLesson,String video,String placa, String kmInicial, String kmFinal) {
+      String cpfTeacher,String picture_student_finish,String picture_teacher_finish,List photosLesson,String video,String placa, String kmInicial, String kmFinal,String obs) {
     showDialog(
         context: context,
         builder: (context) {
@@ -37,6 +37,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             cpfStudent: cpfStudent,
             cpfTeacher: cpfTeacher,
             photosLesson: photosLesson,
+            obs: obs,
             list: [
               ButtonCustom(
                 text: 'Fechar',
@@ -138,11 +139,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   final placa = ErrorString(item,'placa');
                                   final kmInicial = ErrorString(item,'kmInicial');
                                   final kmFinal = ErrorString(item,'kmFinal');
+                                  final obs = ErrorString(item,'obs');
                                   List photosLesson = ErrorList(item,'photosLesson');
 
                                   return GestureDetector(
                                     onTap: ()=>_showDialog(convStart,convFinish,time,picture_student, picture_teacher, cpfStudent, cpfTeacher,picture_student_finish,
-                                        picture_teacher_finish,photosLesson,video,placa,kmInicial,kmFinal),
+                                        picture_teacher_finish,photosLesson,video,placa,kmInicial,kmFinal,obs),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
                                       child: Center(

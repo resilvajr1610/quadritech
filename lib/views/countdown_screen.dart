@@ -7,10 +7,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:quadritech/Utils/export.dart';
 import 'package:quadritech/views/picture_finish_screen.dart';
 import 'package:video_compress/video_compress.dart';
 import '../models/video_compress_api.dart';
-import '../utils/colors.dart';
 import '../widget/buttom_custom.dart';
 
 class CountdownScreen extends StatefulWidget {
@@ -27,6 +27,7 @@ List<CameraDescription> _camerasPhoto = [];
 List<CameraDescription> _camerasVideo = [];
 CameraController? cameraPhotoController;
 CameraController? cameraVideoController;
+var controllerObs = TextEditingController();
 
 class _CountdownScreenState extends State<CountdownScreen> {
 
@@ -72,13 +73,6 @@ class _CountdownScreenState extends State<CountdownScreen> {
     super.dispose();
     cameraVideoController!.dispose();
   }
-
-  // takePhoto()async{
-  //   XFile xfile = await cameraPhotoController!.takePicture();
-  //   if(xfile!=null){
-  //     _savePhoto('lessonPhotos',xfile);
-  //   }
-  // }
 
   stopTimer()async{
     XFile videopath = await cameraVideoController!.stopVideoRecording();
@@ -250,6 +244,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
             .doc(widget.idLesson)
             .update({
           'videos': value.toString(),
+          'obs':controllerObs.text.isNotEmpty?controllerObs.text:''
         }).then((value) async{
           createRandon();
         });
@@ -261,6 +256,8 @@ class _CountdownScreenState extends State<CountdownScreen> {
   Widget build(BuildContext context) {
 
     final value = videoTimer==null? videoTimer : videoTimer/100;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
     Widget buildTime(){
       String twoDigits(int n)=>n.toString().padLeft(2,'0');
@@ -279,75 +276,76 @@ class _CountdownScreenState extends State<CountdownScreen> {
         title: Image.asset("assets/logo_main.png", height: 30),
         centerTitle: true,
       ),
-      body: Container(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            compressVideo?Container():SizedBox(height: 50,),
-            ButtonCustom(
-              onPressed:(){},
-              heightCustom: 0.1,
-              size: 15.0,
-              colorBorder: PaletteColor.primaryColor,
-              colorButton: PaletteColor.primaryColor,
-              colorText: PaletteColor.white,
-              text: 'Processo de Captura e\nRegistro concluídos',
-              widthCustom: 0.8,
-            ),
-            Spacer(),
-            compressVideo?Container():buildTime(),
-            Spacer(),
-            click?Container(
-              child:  compressVideo?Container():ButtonCustom(
-                onPressed:()=>duration.inSeconds > 0
-                    ?startTimer()
-                    :stopTimer(),
-                heightCustom: 0.1,
-                size: 15.0,
-                colorBorder: duration.inSeconds > 0?Colors.green.shade400:Colors.red,
-                colorButton:  duration.inSeconds > 0?Colors.green.shade400:Colors.red,
-                colorText: PaletteColor.white,
-                text: duration.inSeconds > 0?'Pressione para\nIniciar Aula':'Pressione para\nAula Concluída',
-                widthCustom: 0.8,
-              ),
-            )
-            :Container(
-              child:  compressVideo?Container():ButtonCustom(
-                onPressed:()=>stopTimer(),
-                heightCustom: 0.1,
-                size: 15.0,
-                colorBorder: Colors.orange,
-                colorButton:  Colors.orange,
-                colorText: PaletteColor.white,
-                text: 'Aula em andamento',
-                widthCustom: 0.8,
-              ),
-            ),
-            compressVideo?Container():SizedBox(height: 50,),
-            compressVideo==false?Container():Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Aula sendo registrada.\nAguarde finalizar.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
+      body: ListView(
+        children: [
+          Container(
+            width: width,
+            height: height*0.85,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                compressVideo?Container():SizedBox(height: 50,),
+                ButtonCustom(
+                  onPressed:(){},
+                  heightCustom: 0.1,
+                  size: 15.0,
+                  colorBorder: PaletteColor.primaryColor,
+                  colorButton: PaletteColor.primaryColor,
+                  colorText: PaletteColor.white,
+                  text: 'Processo de Captura e\nRegistro concluídos',
+                  widthCustom: 0.8,
+                ),
+                Spacer(),
+                compressVideo?Container():buildTime(),
+                InputText(controller: controllerObs, hint: 'Observações',label: 'Observações', fonts: 12.0,width:width* 0.8),
+                Spacer(),
+                click?Container(
+                  child:  compressVideo?Container():ButtonCustom(
+                    onPressed:()=>duration.inSeconds > 0
+                        ?startTimer()
+                        :stopTimer(),
+                    heightCustom: 0.1,
+                    size: 15.0,
+                    colorBorder: duration.inSeconds > 0?Colors.green.shade400:Colors.red,
+                    colorButton:  duration.inSeconds > 0?Colors.green.shade400:Colors.red,
+                    colorText: PaletteColor.white,
+                    text: duration.inSeconds > 0?'Pressione para\nIniciar Aula':'Pressione para\nAula Concluída',
+                    widthCustom: 0.8,
                   ),
-                  SizedBox(height: 20,),
-                  CircularProgressIndicator(),
-                  SizedBox(height: 15),
-                  // ElevatedButton(onPressed: (){
-                  //   VideoCompress.cancelCompression();
-                  //   Navigator.push(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
-                  // }, child: Text('Cancelar'))
-                ],
-              ),
+                )
+                :Container(
+                  child:  compressVideo?Container():ButtonCustom(
+                    onPressed:()=>stopTimer(),
+                    heightCustom: 0.1,
+                    size: 15.0,
+                    colorBorder: Colors.orange,
+                    colorButton:  Colors.orange,
+                    colorText: PaletteColor.white,
+                    text: 'Aula em andamento',
+                    widthCustom: 0.8,
+                  ),
+                ),
+                compressVideo?Container():SizedBox(height: 50,),
+                compressVideo==false?Container():Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Aula sendo registrada.\nAguarde finalizar.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(height: 5,),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+                Image.asset("assets/pratico.png", height: 60)
+              ],
             ),
-            Image.asset("assets/pratico.png", height: 60)
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

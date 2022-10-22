@@ -14,10 +14,10 @@ class InputText extends StatelessWidget {
   InputText({
     required this.controller,
     required this.hint,
-    required this.label,
+    this.label = '',
     required this.fonts,
-    required this.keyboardType,
-    required this.obscure,
+    this.keyboardType = TextInputType.text,
+    this.obscure = false,
     required this.width,
     this.inputFormatters
 });

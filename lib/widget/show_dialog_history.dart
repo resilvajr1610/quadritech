@@ -15,6 +15,7 @@ class ShowDialogHistory extends StatelessWidget {
   final picture_teacher_finish;
   final startTime;
   final endTime;
+  final obs;
   List photosLesson;
   String placa;
   String kmInicial;
@@ -37,6 +38,7 @@ class ShowDialogHistory extends StatelessWidget {
     required this.placa,
     required this.kmInicial,
     required this.kmFinal,
+    required this.obs,
   });
 
   @override
@@ -64,6 +66,9 @@ class ShowDialogHistory extends StatelessWidget {
           Text('KM Inicial : '+ kmInicial,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
           SizedBox(height: 5),
           Text('KM Final : '+ kmFinal,style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
+          SizedBox(height: 10),
+          obs==''?Container():Text('Observações :',style: TextStyle(color: PaletteColor.grey, fontSize: 15),),
+          obs==''?Container():Text(obs.toString().toUpperCase(),style: TextStyle(color: PaletteColor.grey, fontSize: 15,fontWeight: FontWeight.bold),),
           SizedBox(height: 20),
           video==''?Container():Container(
             alignment: Alignment.center,
