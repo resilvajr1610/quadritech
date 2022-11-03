@@ -37,6 +37,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
   bool click = true;
   int totalSecondsFinal = 0;
   int totalSecondsStart = 0;
+  bool showCamera = false;
 
   WidgetState widgetState = WidgetState.NONE;
   File? picture;
@@ -98,15 +99,6 @@ class _CountdownScreenState extends State<CountdownScreen> {
     }
   }
 
-  Future createVideo()async{
-    XFile videopath = await cameraVideoController!.stopVideoRecording();
-    if(videopath!=null){
-      final file = File(videopath.path);
-      print('file do video');
-      print(file);
-      _saveVideo(videopath);
-    }
-  }
   createRandon(){
     Random random = new Random();
 
@@ -172,6 +164,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
           setState(() {
             print('salvo: $index');
             if(index==5){
+              controllerObs.clear();
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
             }else{
               generateSprint(index+1);
@@ -192,7 +185,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
     // _camerasPhoto = await availableCameras();
     _camerasVideo = await availableCameras();
     // cameraPhotoController = CameraController(_camerasPhoto[0], ResolutionPreset.low);
-    cameraVideoController = CameraController(_camerasVideo[0], ResolutionPreset.low);
+    cameraVideoController = CameraController(_camerasVideo[1], ResolutionPreset.low);
     // await cameraPhotoController!.initialize();
     await cameraVideoController!.initialize();
 
@@ -218,28 +211,25 @@ class _CountdownScreenState extends State<CountdownScreen> {
       try {
         var fileAux = File(file.path);
         setState(()=> fileVideo = fileAux);
-        print('aqui -1');
-        compressVideos();
+        // compressVideos();
+        _uploadVideo();
       } on PlatformException catch (e) {
         print('Error : $e');
       }
   }
 
-  Future compressVideos()async{
-    final info = await VideoCompressApi.compressVideo(fileVideo!).then((value){
-      print('aqui 0');
-      setState(()=>compressedVideoInfo = value);
-    }).then((value) => _uploadVideo());
-  }
+  // Future compressVideos()async{
+  //   await VideoCompressApi.compressVideo(fileVideo!).then((value){
+  //     setState(()=>compressedVideoInfo = value);
+  //   }).then((value) => _uploadVideo());
+  // }
 
   Future _uploadVideo() async {
-    print('aqui 1');
     Reference pastaRaiz = storage.ref();
     Reference arquivo = pastaRaiz.child("aulas").child('video' +"_" +DateTime.now().toString() +".mp4");
     await arquivo.putFile(fileVideo!).whenComplete(()async{
       await arquivo.getDownloadURL().then((value){
         print(value);
-        print('aqui 3');
         db.collection("lesson")
             .doc(widget.idLesson)
             .update({
@@ -255,7 +245,6 @@ class _CountdownScreenState extends State<CountdownScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final value = videoTimer==null? videoTimer : videoTimer/100;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
@@ -280,52 +269,74 @@ class _CountdownScreenState extends State<CountdownScreen> {
         children: [
           Container(
             width: width,
-            height: height*0.85,
+            height: showCamera?height:height*0.85,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                compressVideo?Container():SizedBox(height: 50,),
-                ButtonCustom(
-                  onPressed:(){},
-                  heightCustom: 0.1,
-                  size: 15.0,
-                  colorBorder: PaletteColor.primaryColor,
-                  colorButton: PaletteColor.primaryColor,
-                  colorText: PaletteColor.white,
-                  text: 'Processo de Captura e\nRegistro concluídos',
-                  widthCustom: 0.8,
+                Visibility(
+                  visible: !compressVideo,
+                  child: Container(
+                    height: showCamera?height*0.8:height*0.72,
+                    child: Column(
+                      children: [
+                        ButtonCustom(
+                          onPressed:()=>setState(()=>showCamera?showCamera=false:showCamera=true),
+                          heightCustom: 0.05,
+                          size: 15.0,
+                          colorBorder: PaletteColor.primaryColor,
+                          colorButton: PaletteColor.white,
+                          colorText: PaletteColor.primaryColor,
+                          text:  showCamera?'Ocultar câmera':'Mostrar câmera',
+                          widthCustom: 0.6,
+                        ),
+                        showCamera?Container(
+                            width: width*0.5,
+                            height: height*0.3,
+                            child: CameraPreview(cameraVideoController!)
+                        ):
+                        ButtonCustom(
+                          onPressed:(){},
+                          heightCustom: 0.1,
+                          size: 15.0,
+                          colorBorder: PaletteColor.primaryColor,
+                          colorButton: PaletteColor.primaryColor,
+                          colorText: PaletteColor.white,
+                          text: 'Processo de Captura e\nRegistro concluídos',
+                          widthCustom: 0.8,
+                        ),
+                        Spacer(),
+                        compressVideo?Container():buildTime(),
+                        InputText(controller: controllerObs, hint: 'Observações',label: 'Observações', fonts: 12.0,width:width* 0.8),
+                        Spacer(),
+                        click?Container(
+                          child:  compressVideo?Container():ButtonCustom(
+                            onPressed:()=>duration.inSeconds > 0 ?startTimer() :stopTimer(),
+                            heightCustom: 0.1,
+                            size: 15.0,
+                            colorBorder: duration.inSeconds > 0?Colors.green.shade400:Colors.red,
+                            colorButton:  duration.inSeconds > 0?Colors.green.shade400:Colors.red,
+                            colorText: PaletteColor.white,
+                            text: duration.inSeconds > 0?'Pressione para\nIniciar Aula':'Pressione para\nAula Concluída',
+                            widthCustom: 0.8,
+                          ),
+                        ) :Container(
+                          child:  compressVideo?Container():ButtonCustom(
+                            onPressed:()=>stopTimer(),
+                            heightCustom: 0.1,
+                            size: 15.0,
+                            colorBorder: Colors.orange,
+                            colorButton:  Colors.orange,
+                            colorText: PaletteColor.white,
+                            text: 'Aula em andamento',
+                            widthCustom: 0.8,
+                          ),
+                        ),
+                        compressVideo?Container():SizedBox(height: 50,),
+                      ],
+                    ),
+                  )
                 ),
-                Spacer(),
-                compressVideo?Container():buildTime(),
-                InputText(controller: controllerObs, hint: 'Observações',label: 'Observações', fonts: 12.0,width:width* 0.8),
-                Spacer(),
-                click?Container(
-                  child:  compressVideo?Container():ButtonCustom(
-                    onPressed:()=>duration.inSeconds > 0
-                        ?startTimer()
-                        :stopTimer(),
-                    heightCustom: 0.1,
-                    size: 15.0,
-                    colorBorder: duration.inSeconds > 0?Colors.green.shade400:Colors.red,
-                    colorButton:  duration.inSeconds > 0?Colors.green.shade400:Colors.red,
-                    colorText: PaletteColor.white,
-                    text: duration.inSeconds > 0?'Pressione para\nIniciar Aula':'Pressione para\nAula Concluída',
-                    widthCustom: 0.8,
-                  ),
-                )
-                :Container(
-                  child:  compressVideo?Container():ButtonCustom(
-                    onPressed:()=>stopTimer(),
-                    heightCustom: 0.1,
-                    size: 15.0,
-                    colorBorder: Colors.orange,
-                    colorButton:  Colors.orange,
-                    colorText: PaletteColor.white,
-                    text: 'Aula em andamento',
-                    widthCustom: 0.8,
-                  ),
-                ),
-                compressVideo?Container():SizedBox(height: 50,),
+                compressVideo==false?Container():SizedBox(height: 50,),
                 compressVideo==false?Container():Padding(
                   padding: EdgeInsets.all(20),
                   child: Column(
