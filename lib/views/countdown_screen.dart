@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:quadritech/Utils/export.dart';
 import 'package:quadritech/views/picture_finish_screen.dart';
 import 'package:video_compress/video_compress.dart';
-import '../models/video_compress_api.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../widget/buttom_custom.dart';
 
 class CountdownScreen extends StatefulWidget {
@@ -49,21 +49,16 @@ class _CountdownScreenState extends State<CountdownScreen> {
   bool compressVideo=false;
   double videoTimer = 0.0;
   UploadTask? task;
-  int randomNumber1 = 0;
-  int randomNumber2 = 0;
-  int randomNumber3 = 0;
-  int randomNumber4 = 0;
-  int randomNumber5 = 0;
+  List randomNumber=[];
   Uint8List? photoBytes;
+  int timeClass=0;
 
   @override
   void initState() {
     super.initState();
-    print(widget.timer);
     final splitted = widget.timer.split(' ');
-    int conv = int.parse(splitted[0]);
-    duration = Duration(minutes: conv);
-    // duration = Duration(minutes: 2);
+    timeClass = int.parse(splitted[0]);
+    duration = Duration(minutes: timeClass);
     setState(() {
       totalSecondsStart = duration.inSeconds;
     });
@@ -103,49 +98,36 @@ class _CountdownScreenState extends State<CountdownScreen> {
     Random random = new Random();
 
     setState(() {
-      int time = totalSecondsStart - totalSecondsFinal;
+      int time = (totalSecondsStart - totalSecondsFinal)*1000;
 
-      randomNumber1 = random.nextInt(time);
-      randomNumber2 = random.nextInt(time);
-      randomNumber3 = random.nextInt(time);
-      randomNumber4 = random.nextInt(time);
-      randomNumber5 = random.nextInt(time);
+      if(timeClass==100){
+        for(var i=0;i<=10;i++){
+          randomNumber.add(random.nextInt(time));
+        }
+      }else{
+        for(var i=0;i<=5;i++){
+          randomNumber.add(random.nextInt(time));
+        }
+      }
     });
-    generateSprint(1);
+    generateSprint(0);
   }
 
   generateSprint(int indexPhoto)async{
       photoBytes = null;
-      switch (indexPhoto){
-        case 1:
-          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber1).then((value){
-            setState(()=>photoBytes = value);
-          });
-          break;
-        case 2:
-          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber2).then((value){
-            setState(()=>photoBytes = value);
-          });
-          break;
-        case 3:
-          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber3).then((value){
-            setState(()=>photoBytes = value);
-          });
-          break;
-        case 4:
-          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber4).then((value){
-            setState(()=>photoBytes = value);
-          });
-          break;
-        case 5:
-          await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber5).then((value){
-            setState(()=>photoBytes = value);
-          });
-          break;
-      }
-      if(photoBytes!=null){
-        _uploadImage(indexPhoto);
-      }
+
+      // await VideoCompress.getByteThumbnail(fileVideo!.path,position: randomNumber[indexPhoto]).then((value){
+      //   setState(()=>photoBytes = value);
+      // });
+
+      await VideoThumbnail.thumbnailFile(video: fileVideo!.path,timeMs: randomNumber[indexPhoto],quality: 50).then((path){
+        setState(() {
+          photoBytes = File(path!).readAsBytesSync();
+        });
+        if(photoBytes!=null){
+          _uploadImage(indexPhoto);
+        }
+      });
   }
 
   Future _uploadImage(int index) async {
@@ -162,12 +144,20 @@ class _CountdownScreenState extends State<CountdownScreen> {
           'photosLesson': FieldValue.arrayUnion([value.toString()]),
         }).then((_) {
           setState(() {
-            print('salvo: $index');
-            if(index==5){
-              controllerObs.clear();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
+            if(timeClass==100){
+              if(index==9){
+                controllerObs.clear();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
+              }else{
+                generateSprint(index+1);
+              }
             }else{
-              generateSprint(index+1);
+              if(index==4){
+                controllerObs.clear();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PictureFinishScreen(time: widget.timer,type: "Foto do Aluno",idLesson: widget.idLesson,)));
+              }else{
+                generateSprint(index+1);
+              }
             }
           });
         });
@@ -214,22 +204,14 @@ class _CountdownScreenState extends State<CountdownScreen> {
         // compressVideos();
         _uploadVideo();
       } on PlatformException catch (e) {
-        print('Error : $e');
       }
   }
-
-  // Future compressVideos()async{
-  //   await VideoCompressApi.compressVideo(fileVideo!).then((value){
-  //     setState(()=>compressedVideoInfo = value);
-  //   }).then((value) => _uploadVideo());
-  // }
 
   Future _uploadVideo() async {
     Reference pastaRaiz = storage.ref();
     Reference arquivo = pastaRaiz.child("aulas").child('video' +"_" +DateTime.now().toString() +".mp4");
     await arquivo.putFile(fileVideo!).whenComplete(()async{
       await arquivo.getDownloadURL().then((value){
-        print(value);
         db.collection("lesson")
             .doc(widget.idLesson)
             .update({
